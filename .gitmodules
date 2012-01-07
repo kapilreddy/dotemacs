@@ -1,0 +1,3 @@
+[submodule "packages/lintnode"]
+	path = packages/lintnode
+	url = https://github.com/davidmiller/lintnode.git
