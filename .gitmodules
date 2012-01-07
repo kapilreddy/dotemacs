@@ -4,3 +4,6 @@
 [submodule "packages/slime"]
 	path = packages/slime
 	url = git://github.com/technomancy/slime.git
+[submodule "packages/python/src/pymacs"]
+	path = packages/python/src/pymacs
+	url = https://github.com/pinard/Pymacs.git
