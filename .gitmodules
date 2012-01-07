@@ -1,3 +1,6 @@
 [submodule "packages/lintnode"]
 	path = packages/lintnode
 	url = https://github.com/davidmiller/lintnode.git
+[submodule "packages/slime"]
+	path = packages/slime
+	url = git://github.com/technomancy/slime.git
