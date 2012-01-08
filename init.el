@@ -9,6 +9,7 @@
 
 (require 'init-ui)
 (require 'packages)
+(require 'misc)
 (require 'ui)
 (require 'key-bindings)
 (require 'ibuffer-config)
