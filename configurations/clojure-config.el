@@ -6,9 +6,14 @@
 (add-to-list 'slime-lisp-implementations '(sbcl ("sbcl")))
 
 ;;; Slime/Lisp/Paredit
-(define-key slime-mode-map (kbd "C-c w") 'paredit-wrap-sexp)
-(define-key slime-repl-mode-map (kbd "C-c w") 'paredit-wrap-sexp)
-(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
+(defun clojure-paredit-hook ()
+  (require 'paredit)
+  (paredit-mode 1)
+  (define-key slime-mode-map (kbd "C-c w") 'paredit-wrap-sexp)
+  (define-key slime-repl-mode-map (kbd "C-c w") 'paredit-wrap-sexp)
+  (add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1))))
+
+(add-hook 'clojure-mode-hook 'clojure-paredit-hook)
 (add-hook 'slime-repl-mode-hook 'clojure-mode-font-lock-setup)
 (setq slime-net-coding-system 'utf-8-unix)
 
