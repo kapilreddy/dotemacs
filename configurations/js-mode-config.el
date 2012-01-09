@@ -18,14 +18,8 @@
                                                        (match-end 1) "ƒ")
                                        nil)))))))
 
-
-
-
-(autoload 'moz-minor-mode "moz" "Mozilla Minor and Inferior Mozilla Modes" t)
-
 (add-hook 'espresso-mode-hook 'espresso-custom-setup)
 (defun espresso-custom-setup ()
-  (moz-minor-mode 1)
   (paredit-mode t))
 
 ;; (require 'flymake-cursor)
