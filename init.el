@@ -7,6 +7,8 @@
 
 (add-path "packages")
 
+(require 'uniquify)
+
 (require 'init-ui)
 (require 'packages)
 (require 'misc)
