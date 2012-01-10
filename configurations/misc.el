@@ -15,4 +15,8 @@
 ;; make emacs use the clipboard
 (setq x-select-enable-clipboard t)
 
+(setq require-final-newline t)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(setq-default indent-tabs-mode nil)
+
 (provide 'misc)
