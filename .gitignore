@@ -1,4 +1,13 @@
 elpa
 auto-save-list
 savehist
+cache*
+eshell*
+session*
 ac-comphist*
+.emacs.desktop*
+recentf
+saveplace
+src
+url/*
+srecode-map.el
