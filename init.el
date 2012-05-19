@@ -7,6 +7,8 @@
 
 (add-path "packages")
 
+(add-path "elpa")
+
 (require 'uniquify)
 
 (require 'init-ui)
@@ -18,6 +20,8 @@
 (require 'ido-config)
 (require 'auto-complete)
 (require 'clojure-config)
+(require 'slime-config)
 (require 'js-mode-config)
-(require 'python-mode-config)
+;; (require 'python-mode-config)
+;; (require 'java-config)
 (require 'scss-mode-config)
