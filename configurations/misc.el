@@ -21,4 +21,8 @@
 
 (desktop-save-mode 1)
 
+;;; hooks
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'before-save-hook 'time-stamp)
+
 (provide 'misc)
