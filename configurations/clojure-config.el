@@ -1,5 +1,6 @@
 ;; Slime config
 (add-path "packages/slime")
+(add-path "packages/clojure-mode")
 (require 'slime)
 (require 'clojure-mode)
 (slime-setup '(slime-repl))
