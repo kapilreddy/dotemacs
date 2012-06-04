@@ -46,7 +46,6 @@
     (mapconcat 'identity test-segments "/")))
 
 
-
 (defun midje-jump-to-test ()
   "Jump from implementation file to test."
   (interactive)
@@ -55,6 +54,28 @@
                       (locate-dominating-file buffer-file-name "src/"))
                      (midje-test-for (clojure-find-ns)))))
 
-(define-key clojure-mode-map (kbd "C-c t") 'midje-jump-to-test)
+
+(defun midje-implementation-for (namespace)
+  (let* ((namespace (clojure-underscores-for-hyphens namespace))
+         (segments (split-string (replace-regexp-in-string "_test" "" namespace) "\\.")))
+    (mapconcat 'identity segments "/")))
+
+
+(defun midje-jump-to-implementation ()
+  "Jump from midje test file to implementation."
+  (interactive)
+  (find-file (format "%s/src/%s.clj"
+                     (locate-dominating-file buffer-file-name "src/")
+                     (midje-implementation-for (clojure-find-package)))))
+
+
+(defun midje-jump-between-tests-and-code ()
+  (interactive)
+  (if (clojure-in-tests-p)
+      (midje-jump-to-implementation)
+    (midje-jump-to-test)))
+
+
+(define-key clojure-mode-map (kbd "C-c t") 'midje-jump-between-tests-and-code)
 
 (provide 'clojure-config)
