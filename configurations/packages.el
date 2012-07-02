@@ -7,7 +7,7 @@
 (package-refresh-contents)
 
 (defvar required-packages
-  '(magit paredit color-theme-tangotango  clojure-mode hippie-expand-slime
+  '(magit paredit clojure-mode hippie-expand-slime
           ac-slime))
 
 (dolist (p required-packages)
