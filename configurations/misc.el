@@ -1,5 +1,4 @@
 ;; https://github.com/technomancy/emacs-starter-kit
-
 (when window-system
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
   (tooltip-mode -1)
@@ -24,5 +23,14 @@
 ;;; hooks
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'before-save-hook 'time-stamp)
+
+;; Don't clutter up directories with files~
+(setq backup-directory-alist
+      `(("." . ,(expand-file-name
+                 (concat *tempfiles-dir* "backups"))))
+      auto-save-list-file-prefix
+      (concat *tempfiles-dir* "auto-save-list/.auto-saves-")
+      auto-save-file-name-transforms
+      `((".*" ,(concat *tempfiles-dir* "auto-save-list/") t)))
 
 (provide 'misc)

@@ -3,11 +3,17 @@
 (defun add-path (p)
   (add-to-list 'load-path (concat config-basedir p)))
 
+
 (add-path "configurations")
 
 (add-path "packages")
 
 (add-path "elpa")
+
+(setq *tempfiles-dir* (concat config-basedir "temp-files/")
+      *sess-dir* (concat config-basedir "session-files/"))
+
+(setq session-files-dir (concat config-basedir "session-files/"))
 
 (require 'uniquify)
 
@@ -25,3 +31,4 @@
 ;; (require 'python-mode-config)
 ;; (require 'java-config)
 (require 'scss-mode-config)
+(require 'org-mode-config)
