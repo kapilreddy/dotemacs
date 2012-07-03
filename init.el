@@ -28,6 +28,7 @@
 (require 'clojure-config)
 (require 'slime-config)
 (require 'js-mode-config)
+(require 'yas)
 ;; (require 'python-mode-config)
 ;; (require 'java-config)
 (require 'scss-mode-config)
