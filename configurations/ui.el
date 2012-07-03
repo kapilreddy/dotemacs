@@ -17,5 +17,8 @@
 
 (setq scroll-step 1) ;; keyboard scroll one line at a time
 
+(set-default 'fill-column 72)
+(setq auto-fill-mode 1)
+
 
 (provide 'ui)
