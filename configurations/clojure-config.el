@@ -38,6 +38,10 @@
 (add-hook 'slime-repl-mode-hook (lambda ()
 				  (paredit-mode +1)))
 
+(defun clojure-in-tests-p ()
+  (or (string-match-p "test\." (clojure-find-ns))
+      (string-match-p "/test" (buffer-file-name))))
+
 
 (defun midje-test-for (namespace)
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
