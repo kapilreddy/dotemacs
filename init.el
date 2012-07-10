@@ -26,7 +26,6 @@
 (require 'ido-config)
 (require 'auto-complete)
 (require 'clojure-config)
-(require 'slime-config)
 (require 'js-mode-config)
 (require 'yas)
 ;; (require 'python-mode-config)
