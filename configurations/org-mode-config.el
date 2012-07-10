@@ -23,7 +23,6 @@
 ;; Custom Key Bindings
 (global-set-key (kbd "<f12>") 'org-agenda)
 (global-set-key (kbd "C-M-r") 'org-capture)
-(global-set-key (kbd "C-c r") 'org-capture)
 
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
@@ -42,8 +41,6 @@
 (setq capture-file-path (concat org-base-directory "capture.org"))
 
 (setq org-default-notes-file capture-file-path)
-
-(global-set-key (kbd "C-c r") 'org-capture)
 
 (setq org-todo-state-tags-triggers
       (quote (("CANCELLED" ("CANCELLED" . t))
