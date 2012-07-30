@@ -20,5 +20,10 @@
 (set-default 'fill-column 72)
 (setq auto-fill-mode 1)
 
+;; Show line-number in the mode line
+(line-number-mode 1)
+
+;; Show column-number in the mode line
+(column-number-mode 1)
 
 (provide 'ui)
