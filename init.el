@@ -15,8 +15,11 @@
 
 (setq session-files-dir (concat config-basedir "session-files/"))
 
-(require 'uniquify)
+(server-start)
 
+(setq mac-command-modifier 'meta)
+
+(require 'uniquify)
 (require 'init-ui)
 (require 'packages)
 (require 'misc)
