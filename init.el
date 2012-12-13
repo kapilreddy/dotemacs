@@ -35,3 +35,4 @@
 ;; (require 'java-config)
 (require 'scss-mode-config)
 (require 'org-mode-config)
+(require 'emacslisp-config)
