@@ -35,4 +35,7 @@
 ;; (require 'java-config)
 (require 'scss-mode-config)
 (require 'org-mode-config)
+(require 'android-config)
+(require 'golang-config)
 (require 'emacslisp-config)
+(require 'cljs-config)
