@@ -1,5 +1,4 @@
 (add-path "packages/android-mode/")
-(require 'cedet)
 (require 'android-mode)
 (require 'android)
 
@@ -35,11 +34,14 @@ dir directory can be found."
       'install-run-android)))
 
 (defun java-setup ()
+  (highlight-lines-matching-regexp ".\\{96\\}")
+  (setq espresso-indent-level 2)
   (setq tab-stop-list '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92)
-    indent-tabs-mode nil
-    tab-width 4
-    fill-column 96
-    c-comment-start-regexp "\\(@\\|/\\(/\\|[*][*]?\\)\\)"))
+        c-basic-offset 2
+        indent-tabs-mode nil
+        tab-width 2
+        fill-column 95
+        c-comment-start-regexp "\\(@\\|/\\(/\\|[*][*]?\\)\\)"))
 
 (add-hook 'android-mode-hook 'java-setup)
 
