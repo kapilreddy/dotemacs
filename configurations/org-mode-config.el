@@ -114,7 +114,7 @@
 ;; Custom agenda command definitions
 (setq org-agenda-custom-commands
       (quote (("a" "Work Agenda"
-               ((agenda "" ((org-agenda-files (list org-work-directory))
+               ((agenda "-review" ((org-agenda-files (list org-work-directory))
                             (org-agenda-ndays 1)))
                 (tags-todo "release|review"
                            ((org-agenda-files (list org-work-directory))
@@ -145,6 +145,10 @@
                 (tags "REFILE"
                       ((org-agenda-overriding-header
                         "Notes and Tasks to Refile")))
+                nil))
+              ("p" "Personal Agenda"
+               ((agenda "" ((org-agenda-files (list org-personal-directory))
+                            (org-agenda-ndays 45)))
                 nil)))))
 
 (setq org-columns-default-format "%80ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM")
@@ -264,5 +268,8 @@ Late deadlines first, then scheduled, then non-late deadlines"
 
 (defun bh/is-scheduled-late (date-str)
   (string-match "Sched\.\\(.*\\)x:" date-str))
+
+
+(setq org-agenda-skip-scheduled-if-deadline-is-shown t)
 
 (provide 'org-mode-config)
