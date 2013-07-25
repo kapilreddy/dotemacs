@@ -44,5 +44,7 @@ dir directory can be found."
         c-comment-start-regexp "\\(@\\|/\\(/\\|[*][*]?\\)\\)"))
 
 (add-hook 'android-mode-hook 'java-setup)
+(add-hook 'android-mode-hook 'paredit-mode)
+
 
 (provide 'android-config)
