@@ -40,3 +40,4 @@
 (require 'golang-config)
 (require 'emacslisp-config)
 (require 'cljs-config)
+(require 'clean-mode-line)
