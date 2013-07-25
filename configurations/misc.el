@@ -33,4 +33,10 @@
       auto-save-file-name-transforms
       `((".*" ,(concat *tempfiles-dir* "auto-save-list/") t)))
 
+
+(require 'exec-path-from-shell)
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+
+
 (provide 'misc)

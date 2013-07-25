@@ -3,10 +3,11 @@
 (defun add-path (p)
   (add-to-list 'load-path (concat config-basedir p)))
 
-
 (add-path "configurations")
 
 (add-path "packages")
+
+;; (add-path "packages/org-mode/lisp")
 
 (add-path "elpa")
 

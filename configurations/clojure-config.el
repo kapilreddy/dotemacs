@@ -48,22 +48,19 @@
                 lisp-mode
                 textile-mode
                 markdown-mode
-                slime-repl-mode))
+                nrepl-mode))
   (add-to-list 'ac-modes mode))
 
 
 ;;ac-slime auto-complete plugin
-(require 'ac-slime)
-(add-hook 'slime-mode-hook 'set-up-slime-ac)
-(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+;; (require 'ac-nrepl)
 
-;;Key triggers
-(ac-set-trigger-key "TAB")
-(define-key ac-completing-map (kbd "C-M-n") 'ac-next)
-(define-key ac-completing-map (kbd "C-M-p") 'ac-previous)
-(define-key ac-completing-map "\t" 'ac-complete)
-(define-key ac-completing-map (kbd "M-RET") 'ac-help)
-(define-key ac-completing-map "\r" 'nil)
+;; (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
+;; (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup)
+;; (eval-after-load "auto-complete"
+;;   '(add-to-list 'ac-modes 'nrepl-mode))
+
+;; (define-key nrepl-interaction-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc)
 
 ;; (require 'durendal)
 ;; (add-hook 'slime-compilation-finished-hook 'durendal-hide-successful-compile)
@@ -127,19 +124,21 @@
 (setq auto-mode-alist (append '(("\\.cljs$" . clojure-mode))
                               auto-mode-alist))
 
-(require 'slime)
-(add-path "packages/slime/contrib/")
-(slime-setup '(slime-repl slime-scratch slime-editing-commands))
-(setq slime-protocol-version 'ignore)
-(setq slime-net-coding-system 'utf-8-unix)
-(add-hook 'slime-repl-mode-hook 'enable-paredit-mode)
+(require 'nrepl)
+(add-hook 'nrepl-interaction-mode-hook
+          'nrepl-turn-on-eldoc-mode)
 
-(add-hook 'slime-repl-mode-hook (lambda ()
-                                  (define-key slime-repl-mode-map
+(setq nrepl-hide-special-buffers t)
+(setq nrepl-tab-command 'indent-for-tab-command)
+(setq nrepl-popup-stacktraces-in-repl t)
+(add-to-list 'same-window-buffer-names "*nrepl*")
+(add-hook 'nrepl-mode-hook 'enable-paredit-mode)
+(add-hook 'nrepl-mode-hook (lambda ()
+                                  (define-key nrepl-mode-map
                                     (kbd "DEL") 'paredit-backward-delete)
-                                  (define-key slime-repl-mode-map
+                                  (define-key nrepl-mode-map
                                     (kbd "{") 'paredit-open-curly)
-                                  (define-key slime-repl-mode-map
+                                  (define-key nrepl-mode-map
                                     (kbd "}") 'paredit-close-curly)
                                   (modify-syntax-entry ?\{ "(}")
                                   (modify-syntax-entry ?\} "){")
@@ -191,5 +190,7 @@
     (midje-jump-to-test)))
 
 (define-key clojure-mode-map (kbd "C-c t") 'midje-jump-between-tests-and-code)
+
+(setq nrepl-port "4005")
 
 (provide 'clojure-config)

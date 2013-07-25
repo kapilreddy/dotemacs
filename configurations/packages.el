@@ -8,8 +8,8 @@
 
 (defvar required-packages
   '(magit paredit clojure-mode hippie-expand-slime
-          yasnippet ac-slime rainbow-delimiters
-          durendal))
+          yasnippet ac-slime rainbow-delimiters cljsbuild-mode
+          nrepl durendal))
 
 (dolist (p required-packages)
   (when (not (package-installed-p p))
