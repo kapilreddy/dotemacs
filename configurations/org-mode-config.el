@@ -3,6 +3,7 @@
 (setq org-directory "~/Dropbox/org-files/")
 (setq org-base-directory "~/Dropbox/org-files/")
 (setq org-work-directory "~/Dropbox/org-files/work/")
+(setq org-personal-directory "~/Dropbox/org-files/personal/")
 (setq org-agenda-files (list (concat org-base-directory "work")
                              (concat org-base-directory "personal")))
 
@@ -27,7 +28,7 @@
 
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "|" "FOLLOWUP(f@/!)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
@@ -35,6 +36,7 @@
               ("DONE" :foreground "forest green" :weight bold)
               ("WAITING" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
+              ("FOLLOWUP" :foreground "green" :weight bold)
               ("CANCELLED" :foreground "forest green" :weight bold))))
 
 (setq org-use-fast-todo-selection t)
@@ -46,6 +48,7 @@
 (setq org-todo-state-tags-triggers
       (quote (("CANCELLED" ("CANCELLED" . t))
               ("WAITING" ("WAITING" . t))
+              ("FOLLOWUP" ("FOLLOWUP" . t))
               ("HOLD" ("WAITING" . t) ("HOLD" . t))
               (done ("WAITING") ("HOLD"))
               ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
@@ -115,7 +118,7 @@
 (setq org-agenda-custom-commands
       (quote (("a" "Work Agenda"
                ((agenda "-review" ((org-agenda-files (list org-work-directory))
-                            (org-agenda-ndays 1)))
+                                   (org-agenda-ndays 1)))
                 (tags-todo "release|review"
                            ((org-agenda-files (list org-work-directory))
                             (org-agenda-overriding-header
@@ -133,7 +136,7 @@
                             (org-tags-match-list-sublevels t)
                             (org-agenda-sorting-strategy
                              '(effort-up category-keep))))
-                (tags-todo "WAITING|HOLD"
+                (tags-todo "WAITING|FOLLOWUP"
                            ((org-agenda-files (list org-work-directory))
                             (org-agenda-overriding-header
                              "Waiting Tasks")
