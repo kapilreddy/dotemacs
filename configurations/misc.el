@@ -34,6 +34,7 @@
       `((".*" ,(concat *tempfiles-dir* "auto-save-list/") t)))
 
 
+(add-path "packages/exec-path-from-shell")
 (require 'exec-path-from-shell)
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))

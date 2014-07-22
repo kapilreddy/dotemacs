@@ -145,9 +145,28 @@
                                   (modify-syntax-entry ?\[ "(]")
                                   (modify-syntax-entry ?\] ")[")))
 
+(add-hook 'nrepl-repl-mode-hook
+          'enable-paredit-mode)
+
+;; (add-to-list 'same-window-buffer-names "*nrepl*")
 
 (remove-hook 'clojure-mode-hook 'clojure-test-maybe-enable)
 
+
+(defun nrepl-conn-default (connection-buffer)
+  (interactive (list nrepl-connection-buffer))
+  (with-temp-message "Setting default nrepl..."
+    (nrepl-make-repl-connection-default connection-buffer))
+  (message (concat "Default connection set to " (buffer-name))))
+
+(define-key clojure-mode-map (kbd "C-c z d") 'nrepl-conn-default)
+(define-key clojure-mode-map (kbd "C-c z b") 'nrepl-connection-browser)
+
+
+(setq nrepl-port "4005")
+
+
+;; Midje utility functions
 (defun clojure-in-tests-p ()
   (or (string-match-p "test\." (clojure-find-ns))
       (string-match-p "/test" (buffer-file-name))))
@@ -189,8 +208,15 @@
       (midje-jump-to-implementation)
     (midje-jump-to-test)))
 
+
 (define-key clojure-mode-map (kbd "C-c t") 'midje-jump-between-tests-and-code)
 
-(setq nrepl-port "4005")
+;; Clojur refactor config
+(require 'clj-refactor)
+(add-hook 'clojure-mode-hook (lambda ()
+                               (clj-refactor-mode 1)
+                               ;; insert keybinding setup here
+                               ))
+(cljr-add-keybindings-with-prefix "C-c C-m")
 
 (provide 'clojure-config)
