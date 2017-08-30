@@ -10,3 +10,6 @@
 [submodule "packages/exec-path-from-shell"]
 	path = packages/exec-path-from-shell
 	url = https://github.com/purcell/exec-path-from-shell.git
+[submodule "el-get"]
+	path = el-get
+	url = https://github.com/dimitri/el-get
