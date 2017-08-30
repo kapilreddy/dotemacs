@@ -12,3 +12,4 @@ src
 url/*
 srecode-map.el
 temp-files
+el-get-packages

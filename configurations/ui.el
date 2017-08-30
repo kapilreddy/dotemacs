@@ -1,6 +1,13 @@
 (add-path "packages/color-theme-6.6.0")
 (add-path "packages/color-theme-tangotango-0.0.2")
 
+
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode 0))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+
+(highlight-lines-matching-regexp ".\{72\}")
+
 (require 'color-theme-tangotango)
 (color-theme-tangotango)
 

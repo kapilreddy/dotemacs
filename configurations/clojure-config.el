@@ -9,68 +9,6 @@
      (define-key paredit-mode-map (kbd "M-[") 'paredit-wrap-square)
      (define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)))
 
-;;auto-complete mode
-(add-path "packages/auto-complete/")
-(require 'auto-complete)
-(require 'auto-complete-config)
-(ac-config-default)
-(ac-flyspell-workaround)
-
-
-(setq ac-comphist-file (concat *tempfiles-dir* "ac-comphist.dat"))
-
-(global-auto-complete-mode t)
-(setq ac-auto-show-menu t)
-(setq ac-dwim t)
-(setq ac-use-menu-map t)
-(setq ac-quick-help-delay 1)
-(setq ac-quick-help-height 60)
-
-(set-default 'ac-sources
-             '(ac-source-dictionary
-               ac-source-words-in-buffer
-               ac-source-words-in-same-mode-buffers
-               ac-source-words-in-all-buffer))
-
-(dolist (mode '(magit-log-edit-mode
-                log-edit-mode
-                org-mode
-                text-mode
-                sass-mode
-                yaml-mode
-                csv-mode
-                espresso-mode
-                haskell-mode
-                html-mode
-                nxml-mode
-                sh-mode
-                clojure-mode
-                lisp-mode
-                textile-mode
-                markdown-mode
-                nrepl-mode))
-  (add-to-list 'ac-modes mode))
-
-
-;;ac-slime auto-complete plugin
-;; (require 'ac-nrepl)
-
-;; (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
-;; (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup)
-;; (eval-after-load "auto-complete"
-;;   '(add-to-list 'ac-modes 'nrepl-mode))
-
-;; (define-key nrepl-interaction-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc)
-
-;; (require 'durendal)
-;; (add-hook 'slime-compilation-finished-hook 'durendal-hide-successful-compile)
-;; (add-hook 'sldb-mode-hook 'durendal-dim-sldb-font-lock)
-
-;; highlight expression on eval
-;; (require 'highlight)
-;; (require 'eval-sexp-fu)
-;; (setq eval-sexp-fu-flash-duration 0.5)
-
 
 (require 'clojure-mode)
 
@@ -98,8 +36,6 @@
 (eval-after-load 'find-file-in-project
   '(add-to-list 'ffip-patterns "*.clj"))
 
-(require 'clojure-mode)
-
 (add-hook 'clojure-mode-hook
           (lambda ()
             (enable-paredit-mode)
@@ -124,46 +60,9 @@
 (setq auto-mode-alist (append '(("\\.cljs$" . clojure-mode))
                               auto-mode-alist))
 
-(require 'nrepl)
-(add-hook 'nrepl-interaction-mode-hook
-          'nrepl-turn-on-eldoc-mode)
-
-(setq nrepl-hide-special-buffers t)
-(setq nrepl-tab-command 'indent-for-tab-command)
-(setq nrepl-popup-stacktraces-in-repl t)
-(add-to-list 'same-window-buffer-names "*nrepl*")
-(add-hook 'nrepl-mode-hook 'enable-paredit-mode)
-(add-hook 'nrepl-mode-hook (lambda ()
-                                  (define-key nrepl-mode-map
-                                    (kbd "DEL") 'paredit-backward-delete)
-                                  (define-key nrepl-mode-map
-                                    (kbd "{") 'paredit-open-curly)
-                                  (define-key nrepl-mode-map
-                                    (kbd "}") 'paredit-close-curly)
-                                  (modify-syntax-entry ?\{ "(}")
-                                  (modify-syntax-entry ?\} "){")
-                                  (modify-syntax-entry ?\[ "(]")
-                                  (modify-syntax-entry ?\] ")[")))
-
-(add-hook 'nrepl-repl-mode-hook
-          'enable-paredit-mode)
-
-;; (add-to-list 'same-window-buffer-names "*nrepl*")
 
 (remove-hook 'clojure-mode-hook 'clojure-test-maybe-enable)
 
-
-(defun nrepl-conn-default (connection-buffer)
-  (interactive (list nrepl-connection-buffer))
-  (with-temp-message "Setting default nrepl..."
-    (nrepl-make-repl-connection-default connection-buffer))
-  (message (concat "Default connection set to " (buffer-name))))
-
-(define-key clojure-mode-map (kbd "C-c z d") 'nrepl-conn-default)
-(define-key clojure-mode-map (kbd "C-c z b") 'nrepl-connection-browser)
-
-
-(setq nrepl-port "4005")
 
 
 ;; Midje utility functions
@@ -211,12 +110,25 @@
 
 (define-key clojure-mode-map (kbd "C-c t") 'midje-jump-between-tests-and-code)
 
+
+(require 'cider)
+(setq nrepl-log-messages t)
+(setq cider-auto-mode nil)
+(setq cider-prompt-for-symbol nil)
+(setq nrepl-hide-special-buffers t)
+(setq cider-prefer-local-resources t)
+(setq cider-save-file-on-load nil)
+(setq cider-save-file-on-load t)
+(setq cider-eval-result-prefix "")
+
+
 ;; Clojur refactor config
-(require 'clj-refactor)
-(add-hook 'clojure-mode-hook (lambda ()
-                               (clj-refactor-mode 1)
-                               ;; insert keybinding setup here
-                               ))
-(cljr-add-keybindings-with-prefix "C-c C-m")
+;; (require 'clj-refactor)
+;; (add-hook 'clojure-mode-hook (lambda ()
+;;                                (clj-refactor-mode 1)
+;;                                ;; insert keybinding setup here
+;;                                ))
+;; (cljr-add-keybindings-with-prefix "C-c C-m")
+
 
 (provide 'clojure-config)
