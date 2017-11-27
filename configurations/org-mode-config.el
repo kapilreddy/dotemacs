@@ -37,7 +37,7 @@
 
 
 (global-set-key "\C-ca" 'org-agenda)
-
+(global-set-key (kbd "C-M-r") 'org-capture)
 ;; Switch to org specific buffers
 (global-set-key "\C-cb" 'org-iswitchb)
 
@@ -56,13 +56,14 @@
 
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "PROJECT(p)" "|" "DONE(d!/!)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "|" "FOLLOWUP(f@/!)"))))
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "|" "FOLLOWUP(f@/!)" "|" "DELEGATED(D@/!)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
               ("NEXT" :foreground "blue" :weight bold)
               ("DONE" :foreground "forest green" :weight bold)
               ("WAITING" :foreground "orange" :weight bold)
+              ("DELEGATED" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
               ("FOLLOWUP" :foreground "green" :weight bold)
               ("PROJECT" :foreground "green" :weight bold)
@@ -74,6 +75,7 @@
       (quote (("CANCELLED" ("CANCELLED" . t))
               ("WAITING" ("WAITING" . t))
               ("FOLLOWUP" ("FOLLOWUP" . t))
+              ("DELEGATED" ("DELEGATED" . t))
               ("PROJECT" ("project" . t))
               ("HOLD" ("WAITING" . t) ("HOLD" . t))
               (done ("WAITING") ("HOLD"))
@@ -195,6 +197,11 @@
                              "Waiting Tasks")
                             (org-agenda-sorting-strategy '(deadline-up priority-down))
                             (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("HOLD" "PROJECT" "NEXT")))))
+                (todo "DELEGATED"
+                      ((org-agenda-files (list org-work-directory))
+                       (org-agenda-overriding-header "Delegated Tasks")
+                       (org-agenda-sorting-strategy '(deadline-up priority-down))
+                       (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("HOLD" "PROJECT" "NEXT")))))
                 (agenda "" ((org-agenda-files (list org-work-directory))
                             (org-agenda-ndays 7)
                             (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("TODO")
@@ -215,7 +222,7 @@
                       ((org-agenda-files (list org-work-directory))
                        (org-agenda-overriding-header
                         "Next Tasks")
-                       (org-agenda-sorting-strategy '(deadline-up))))
+                       (org-agenda-sorting-strategy '(priority-down))))
 
                 (tags "REFILE"
                       ((org-agenda-overriding-header
@@ -499,9 +506,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (let (org-log-done org-log-states)   ; turn off logging
     (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
-(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+(add-hook 'org-after-todo-statistics-hook 'undefined)
 ;; Parent task cannot be switched to done unless all subtasks are done
-(setq org-enforce-todo-dependencies t)
+(setq org-enforce-todo-dependencies 'undefined)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -562,5 +569,17 @@ Late deadlines first, then scheduled, then non-late deadlines"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(require 'helm-org-rifle)
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (local-set-key "\M-n" 'outline-next-visible-heading)
+            (local-set-key "\M-p" 'outline-previous-visible-heading)
+            (local-set-key "\M-s" 'helm-org-rifle-current-buffer)))
+
+
+(add-hook 'org-after-todo-state-change-hook
+          (lambda ()
+            (message "lol")))
 
 (provide 'org-mode-config)
