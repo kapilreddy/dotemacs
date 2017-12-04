@@ -19,8 +19,27 @@
 (el-get-bundle paredit)
 (el-get-bundle yasnippet)
 (el-get-bundle magit)
+(el-get-bundle espresso :url "https://raw.githubusercontent.com/Unitech/.emacs.d/master/espresso.el")
+(el-get-bundle fountain-mode :type git :url "https://github.com/rnkn/fountain-mode")
+(el-get-bundle yaml-mode)
+(el-get-bundle highlight)
+(el-get-bundle tide)
 
 (el-get-bundle color-theme-tangotango)
 
+(el-get-bundle org-expiry :url "http://orgmode.org/w/?p=org-mode.git;a=blob_plain;f=contrib/lisp/org-expiry.el")
 
+
+(el-get-bundle cl-lib)
+(el-get-bundle dash)
+(el-get-bundle f)
+(el-get-bundle helm)
+(el-get-bundle s)
+
+(el-get-bundle helm-org-rifle :type git :url "https://github.com/alphapapa/helm-org-rifle/")
+
+(el-get-bundle ht)
+(el-get-bundle org-super-agenda :type git :url "https://github.com/alphapapa/org-super-agenda")
+
+(el-get-bundle org-agenda-property :type git :url "https://github.com/Malabarba/org-agenda-property")
 (provide 'el-get-config)
