@@ -60,8 +60,7 @@
 (setq org-drawers (quote ("PROPERTIES" "LOGBOOK")))
 
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "PROJECT(p)" "DELEGATED(D)" "|" "DONE(d!/!)")
-              (sequence "WAITING(w)" "HOLD(h)" "|" "CANCELLED(c@/!)" "|" "FOLLOWUP(f)"))))
+      (quote ((sequence "TODO(t)" "NEXT(n)" "PROJECT(p)" "DELEGATED(D@/!)"  "FOLLOWUP(f@/!)" "WAITING(w@/!)" "HOLD(h@/!)" "|" "DONE(d!/!)" "CANCELLED(c@/!)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
@@ -200,37 +199,41 @@
 ;; Custom agenda command definitions
 (setq org-agenda-custom-commands
       (quote (("a" "Work Agenda"
-               ((agenda ""
-                        ((org-agenda-files (list org-work-directory))
-                         (org-agenda-ndays 1)
-                         (org-agenda-sorting-strategy '(deadline-up priority-down))
-                         (org-super-agenda-groups '((:name "Worked on today"
-                                                           :log t)
-                                                    (:name "Oncall"
-                                                           :tag "oncall")
-                                                    (:name "Followup"
-                                                           :and (:todo ("TODO" "WAITING")
-                                                                       :tag ("FOLLOWUP")))
-                                                    (:name "Delegated"
-                                                           :todo ("DELEGATED"))
-                                                    (:name "Review"
-                                                           :and (:todo ("TODO" "WAITING")
-                                                                       :tag ("review")))
-                                                    (:name "Waiting TODOs"
-                                                           :and (:todo "WAITING"
-                                                                       :not (:tag ("oncall"
-                                                                                   "review"))))
-                                                    (:name "TODO"
-                                                           :log t
-                                                           :todo ("TODO"))
-                                                    (:name "Projects"
-                                                           :todo ("PROJECT"))
-                                                    (:name "Done today"
-                                                           :todo ("DONE"))
-                                                    (:name "On hold"
-                                                           :todo ("HOLD"))
-                                                    (:name "Next items"
-                                                           :todo ("NEXT"))))))))
+               agenda
+               (progn (setq org-super-agenda-mode t)
+                      (setq org-agenda-log-mode t)
+                      (setq org-agenda-clockreport-mode t))
+
+               ((org-agenda-files (list org-work-directory))
+                (org-agenda-ndays 1)
+                (org-agenda-sorting-strategy '(deadline-up priority-down))
+                (org-super-agenda-groups '((:name "Worked on today"
+                                                  :log t)
+                                           (:name "Oncall"
+                                                  :tag "oncall")
+                                           (:name "Followup"
+                                                  :and (:todo ("TODO" "WAITING")
+                                                              :tag ("FOLLOWUP")))
+                                           (:name "Delegated"
+                                                  :todo ("DELEGATED"))
+                                           (:name "Review"
+                                                  :and (:todo ("TODO" "WAITING")
+                                                              :tag ("review")))
+                                           (:name "Waiting TODOs"
+                                                  :and (:todo "WAITING"
+                                                              :not (:tag ("oncall"
+                                                                          "review"))))
+                                           (:name "TODO"
+                                                  :log t
+                                                  :todo ("TODO"))
+                                           (:name "Projects"
+                                                  :todo ("PROJECT"))
+                                           (:name "Done today"
+                                                  :todo ("DONE"))
+                                           (:name "On hold"
+                                                  :todo ("HOLD"))
+                                           (:name "Next items"
+                                                  :todo ("NEXT"))))))
 
               ("r" "Week work Agenda"
                ((agenda ""
@@ -501,9 +504,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (let (org-log-done org-log-states)   ; turn off logging
     (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
-(add-hook 'org-after-todo-statistics-hook 'undefined)
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 ;; Parent task cannot be switched to done unless all subtasks are done
-(setq org-enforce-todo-dependencies 'undefined)
+(setq org-enforce-todo-dependencies t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
