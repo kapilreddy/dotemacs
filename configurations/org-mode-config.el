@@ -15,6 +15,11 @@
 (setq org-agenda-files (list (concat org-base-directory "work")
                              (concat org-base-directory "personal")))
 
+(setq org-agenda-capture-targets (list (concat org-base-directory "work/rt.org")
+                                       (concat org-base-directory "personal/projects.org")
+                                       (concat org-base-directory "personal/learn.org")
+                                       (concat org-base-directory "personal/payal.org")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -55,8 +60,8 @@
 (setq org-drawers (quote ("PROPERTIES" "LOGBOOK")))
 
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "PROJECT(p)" "|" "DONE(d!/!)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "|" "FOLLOWUP(f@/!)" "|" "DELEGATED(D@/!)"))))
+      (quote ((sequence "TODO(t)" "NEXT(n)" "PROJECT(p)" "DELEGATED(D)" "|" "DONE(d!/!)")
+              (sequence "WAITING(w)" "HOLD(h)" "|" "CANCELLED(c@/!)" "|" "FOLLOWUP(f)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
@@ -92,6 +97,14 @@
 
 (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
 
+;; Add a logline when something is done
+(setq org-log-done (quote time))
+
+;; Add a logline when things change in timeline
+(setq org-log-reschedule (quote time))
+(setq org-log-redeadline (quote time))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -119,11 +132,17 @@
 
 (setq meetings-file-path (concat org-work-directory "meetings.org"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Refile config
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Refile configuration.
 ; Targets include this file and any file contributing to the agenda - up to 9 levels deep
 (setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                 (org-agenda-files :maxlevel . 9))))
+                                 (org-agenda-capture-targets :maxlevel . 5))))
+
 
 ; Use full outline paths for refile targets - we file directly with IDO
 (setq org-refile-use-outline-path t)
@@ -134,6 +153,17 @@
 ; Allow refile to create parent tasks with confirmation
 (setq org-refile-allow-creating-parent-nodes (quote confirm))
 
+; Use IDO for both buffer and file completion and ido-everywhere to t
+(setq org-completion-use-ido t)
+(setq ido-everywhere t)
+(setq ido-max-directory-size 100000)
+(ido-mode (quote both))
+; Use the current window when visiting files and buffers with ido
+(setq ido-default-file-method 'selected-window)
+(setq ido-default-buffer-method 'selected-window)
+; Use the current window for indirect buffer display
+(setq org-indirect-buffer-display 'current-window)
+
 ;;;; Refile settings
 ; Exclude DONE state tasks from refile targets
 (defun bh/verify-refile-target ()
@@ -143,18 +173,6 @@
 (setq org-refile-target-verify-function 'bh/verify-refile-target)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; IDO related config
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; Use IDO for both buffer and file completion and ido-everywhere to t
-(setq org-completion-use-ido t)
-(setq ido-everywhere t)
-(setq ido-max-directory-size 100000)
-(ido-mode (quote both))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -175,28 +193,77 @@
 
 (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
 
+(setq org-columns-default-format "%PRIORITY %80ITEM(Task) %DEADLINE  %10CLOCKSUM {:} %10Effort(Effort) %30CREATED(CREATED) 100%TAGS")
+
+(setq org-agenda-overriding-columns-format nil)
+
 ;; Custom agenda command definitions
 (setq org-agenda-custom-commands
       (quote (("a" "Work Agenda"
-               ((todo "FOLLOWUP"
-                      ((org-agenda-files (list org-work-directory))
-                       (org-agenda-overriding-header
-                        "Followups")
-                       (org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
+               ((agenda ""
+                        ((org-agenda-files (list org-work-directory))
+                         (org-agenda-ndays 1)
+                         (org-agenda-sorting-strategy '(deadline-up priority-down))
+                         (org-super-agenda-groups '((:name "Worked on today"
+                                                           :log t)
+                                                    (:name "Oncall"
+                                                           :tag "oncall")
+                                                    (:name "Followup"
+                                                           :and (:todo ("TODO" "WAITING")
+                                                                       :tag ("FOLLOWUP")))
+                                                    (:name "Delegated"
+                                                           :todo ("DELEGATED"))
+                                                    (:name "Review"
+                                                           :and (:todo ("TODO" "WAITING")
+                                                                       :tag ("review")))
+                                                    (:name "Waiting TODOs"
+                                                           :and (:todo "WAITING"
+                                                                       :not (:tag ("oncall"
+                                                                                   "review"))))
+                                                    (:name "TODO"
+                                                           :log t
+                                                           :todo ("TODO"))
+                                                    (:name "Projects"
+                                                           :todo ("PROJECT"))
+                                                    (:name "Done today"
+                                                           :todo ("DONE"))
+                                                    (:name "On hold"
+                                                           :todo ("HOLD"))
+                                                    (:name "Next items"
+                                                           :todo ("NEXT"))))))))
 
+              ("r" "Week work Agenda"
+               ((agenda ""
+                        ((org-agenda-files (list org-work-directory))
+                         (org-agenda-ndays 7)
+                         (org-agenda-sorting-strategy '(deadline-up priority-down))
+                         (org-super-agenda-groups '())))))
+
+
+              ("b" "Work Agenda"
+               ((tags-todo "+oncall"
+                           ((org-agenda-overriding-header "Oncall!!!")
+                            (org-agenda-files (list org-work-directory))
+                            (org-agenda-sorting-strategy '(deadline-up priority-down))
+                            (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("TODO" "WAITING")))))
+                (todo "FOLLOWUP"
+                      ((org-agenda-files (list org-work-directory))
+                       (org-deadline-warning-days 0)
+
+                       (org-agenda-overriding-header "Followups")
                        (org-agenda-sorting-strategy '(deadline-up priority-down))))
                 (tags-todo "review"
                            ((org-agenda-files (list org-work-directory))
-                            (org-agenda-overriding-header
-                             "Review Tasks")
+                            (org-agenda-overriding-header "Review Tasks")
                             (org-agenda-sorting-strategy '(deadline-up priority-down))
+
                             (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("TODO")))))
-                (tags-todo "WAITING"
-                           ((org-agenda-files (list org-work-directory))
-                            (org-agenda-overriding-header
-                             "Waiting Tasks")
-                            (org-agenda-sorting-strategy '(deadline-up priority-down))
-                            (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("HOLD" "PROJECT" "NEXT")))))
+                (agenda ""
+                        ((org-agenda-files (list org-work-directory))
+                         (org-agenda-ndays 1)
+                         (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("WAITING")
+                                                                              'regexp '(":oncall:")))
+                         (org-agenda-sorting-strategy '(deadline-up priority-down))))
                 (todo "DELEGATED"
                       ((org-agenda-files (list org-work-directory))
                        (org-agenda-overriding-header "Delegated Tasks")
@@ -211,7 +278,10 @@
                            ((org-agenda-files (list org-work-directory))
                             (org-agenda-overriding-header
                              "Projects")
-                            (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("PROJECT" "HOLD")))))
+                            (org-agenda-sorting-strategy '(deadline-up))
+                            (org-agenda-show-all-dates nil)
+                            (org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
+                            (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("PROJECT" "HOLD" "NEXT")))))
                 (todo "REVIEW"
                       ((org-agenda-files (list org-work-directory))
                        (org-agenda-overriding-header
@@ -276,6 +346,8 @@
                             (org-agenda-start-on-weekday 0)
                             (org-agenda-start-with-log-mode t)
                             (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("DONE"))))))))))
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -362,6 +434,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Tag config
@@ -400,8 +475,6 @@ Late deadlines first, then scheduled, then non-late deadlines"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(setq org-columns-default-format "%80ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM")
-
 (setq org-global-properties (quote (("Effort_ALL" . "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00")
                                     ("STYLE_ALL" . "habit"))))
 
@@ -417,84 +490,6 @@ Late deadlines first, then scheduled, then non-late deadlines"
 ;; Enable speedy commands. Active only on stars at org headings
 (setq org-use-speed-commands t)
 
-(global-set-key (kbd "C-c C-g n") 'bh/org-todo)
-
-(defun bh/org-todo (arg)
-  (interactive "p")
-  (if (equal arg 4)
-      (save-restriction
-        (bh/narrow-to-org-subtree)
-        (org-show-todo-tree nil))
-    (bh/narrow-to-org-subtree)
-    (org-show-todo-tree nil)))
-
-(global-set-key (kbd "C-c C-g w") 'bh/widen)
-
-(defun bh/widen ()
-  (interactive)
-  (if (equal major-mode 'org-agenda-mode)
-      (progn
-        (org-agenda-remove-restriction-lock)
-        (when org-agenda-sticky
-          (org-agenda-redo)))
-    (widen)))
-
-(add-hook 'org-agenda-mode-hook
-          '(lambda () (org-defkey org-agenda-mode-map "W" (lambda () (interactive) (setq bh/hide-scheduled-and-waiting-next-tasks t) (bh/widen))))
-          'append)
-
-
-
-(defun bh/narrow-up-one-org-level ()
-  (widen)
-  (save-excursion
-    (outline-up-heading 1 'invisible-ok)
-    (bh/narrow-to-org-subtree)))
-
-(defun bh/get-pom-from-agenda-restriction-or-point ()
-  (or (and (marker-position org-agenda-restrict-begin) org-agenda-restrict-begin)
-      (org-get-at-bol 'org-hd-marker)
-      (and (equal major-mode 'org-mode) (point))
-      org-clock-marker))
-
-(defun bh/narrow-up-one-level ()
-  (interactive)
-  (if (equal major-mode 'org-agenda-mode)
-      (progn
-        (org-with-point-at (bh/get-pom-from-agenda-restriction-or-point)
-          (bh/narrow-up-one-org-level))
-        (org-agenda-redo))
-    (bh/narrow-up-one-org-level)))
-
-(add-hook 'org-agenda-mode-hook
-          '(lambda () (org-defkey org-agenda-mode-map "U" 'bh/narrow-up-one-level))
-          'append)
-
-(defun bh/narrow-to-org-project ()
-  (widen)
-  (save-excursion
-    (bh/find-project-task)
-    (bh/narrow-to-org-subtree)))
-
-(defun bh/narrow-to-project ()
-  (interactive)
-  (if (equal major-mode 'org-agenda-mode)
-      (progn
-        (org-with-point-at (bh/get-pom-from-agenda-restriction-or-point)
-          (bh/narrow-to-org-project)
-          (save-excursion
-            (bh/find-project-task)
-            (org-agenda-set-restriction-lock)))
-        (org-agenda-redo)
-        (beginning-of-buffer))
-    (bh/narrow-to-org-project)
-    (save-restriction
-      (org-agenda-set-restriction-lock))))
-
-(add-hook 'org-agenda-mode-hook
-          '(lambda () (org-defkey org-agenda-mode-map "P" 'bh/narrow-to-project))
-          'append)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -569,6 +564,13 @@ Late deadlines first, then scheduled, then non-late deadlines"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Use helm-org-rifle to search through an org buffer
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 (require 'helm-org-rifle)
 
 (add-hook 'org-mode-hook
@@ -578,8 +580,12 @@ Late deadlines first, then scheduled, then non-late deadlines"
             (local-set-key "\M-s" 'helm-org-rifle-current-buffer)))
 
 
-(add-hook 'org-after-todo-state-change-hook
-          (lambda ()
-            (message "lol")))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+(define-key org-mode-map "\M-q" 'org-fill-paragraph)
+
+
 
 (provide 'org-mode-config)

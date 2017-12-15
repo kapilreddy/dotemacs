@@ -42,4 +42,6 @@
 (el-get-bundle org-super-agenda :type git :url "https://github.com/alphapapa/org-super-agenda")
 
 (el-get-bundle org-agenda-property :type git :url "https://github.com/Malabarba/org-agenda-property")
+
+(el-get-bundle cljr-helm :type git :url "https://github.com/philjackson/cljr-helm")
 (provide 'el-get-config)
