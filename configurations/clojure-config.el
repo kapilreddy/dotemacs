@@ -113,7 +113,7 @@
 
 (require 'cider)
 (setq nrepl-log-messages t)
-(setq cider-auto-mode nil)
+(setq cider-auto-mode t)
 (setq cider-prompt-for-symbol nil)
 (setq nrepl-hide-special-buffers t)
 (setq cider-prefer-local-resources t)
@@ -121,14 +121,17 @@
 (setq cider-save-file-on-load t)
 (setq cider-eval-result-prefix "")
 
-
+(add-hook 'cider-repl-mode-hook 'paredit-mode)
 ;; Clojur refactor config
-;; (require 'clj-refactor)
-;; (add-hook 'clojure-mode-hook (lambda ()
-;;                                (clj-refactor-mode 1)
-;;                                ;; insert keybinding setup here
-;;                                ))
-;; (cljr-add-keybindings-with-prefix "C-c C-m")
+(require 'clj-refactor)
+(add-hook 'clojure-mode-hook (lambda ()
+                               (clj-refactor-mode 1)
+                               ;; insert keybinding setup here
+                               ))
+(cljr-add-keybindings-with-prefix "C-c C-m")
 
+(require 'cljr-helm)
+(setq clj-add-ns-to-blank-clj-files nil)
+(define-key clojure-mode-map (kbd "C-c M-m") 'cljr-helm)
 
 (provide 'clojure-config)
