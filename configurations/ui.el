@@ -33,4 +33,8 @@
 ;; Show column-number in the mode line
 (column-number-mode 1)
 
+
+(set-face-attribute 'default t :font "Input Mono Narrow")
+(set-face-attribute 'default nil :font "Input Mono Narrow")
+(set-frame-font "Input Mono Narrow" nil t)
 (provide 'ui)
