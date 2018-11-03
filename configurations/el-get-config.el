@@ -44,4 +44,10 @@
 (el-get-bundle org-agenda-property :type git :url "https://github.com/Malabarba/org-agenda-property")
 
 (el-get-bundle cljr-helm :type git :url "https://github.com/philjackson/cljr-helm")
+
+(el-get-bundle ledger-mode :type git :url "https://github.com/ledger/ledger-mode/" :version "v3.1.1")
+
+(el-get-bundle github-modern-theme :type git :url "https://github.com/philiparvidsson/GitHub-Modern-Theme-for-Emacs")
+(el-get-bundle smooth-scrolling-mode :type git :url "https://github.com/aspiers/smooth-scrolling")
+
 (provide 'el-get-config)

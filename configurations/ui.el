@@ -14,7 +14,9 @@
 (setq uniquify-buffer-name-style 'post-forward)
 
 (require 'smooth-scroll)
+(require 'smooth-scrolling)
 ;; scroll one line at a time (less "jumpy" than defaults)
+(smooth-scrolling-mode 1)
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 
@@ -37,4 +39,5 @@
 (set-face-attribute 'default t :font "Input Mono Narrow")
 (set-face-attribute 'default nil :font "Input Mono Narrow")
 (set-frame-font "Input Mono Narrow" nil t)
+;; (require 'github-modern)
 (provide 'ui)

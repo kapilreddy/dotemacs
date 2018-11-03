@@ -43,3 +43,14 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(defun highlight-this-line ()
+  "Highlight the current line."
+  (interactive)
+  (hlt-highlight-region (line-beginning-position) (line-end-position)))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(el-get-dir "/Users/kapil/.emacs.d/el-get-packages")
+ '(org-agenda-property-list (quote (""))))
