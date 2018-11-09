@@ -10,9 +10,15 @@
 
 (require 'el-get)
 
+(el-get-bundle sesman :type :git :url "https://github.com/vspinu/sesman" :checkout "v0.3.3")
+
+(el-get-bundle clojure-semantic :type git :url "https://github.com/kototama/clojure-semantic")
 (el-get-bundle seq :type git :url "https://github.com/NicolasPetton/seq.el.git")
-(el-get-bundle cider :version "v0.15.0")
-(el-get-bundle clj-refactor :version "2.3.1")
+(el-get-bundle clojure-mode :type git :url "https://github.com/clojure-emacs/clojure-mode/" :checkout "5.9.0")
+(el-get-bundle cider :git "https://github.com/clojure-emacs/cider/" :checkout "23de90cf771a236b424eb3fa8a4403041bed2e40")
+(el-get-bundle clj-refactor
+  :git "https://github.com/clojure-emacs/clj-refactor.el")
+(el-get-bundle clojure-snippets :git "https://github.com/mpenet/clojure-snippets")
 (el-get-bundle smooth-scroll)
 (el-get-bundle exec-path-from-shell)
 (el-get-bundle rainbow-delimiters)
@@ -49,5 +55,8 @@
 
 (el-get-bundle github-modern-theme :type git :url "https://github.com/philiparvidsson/GitHub-Modern-Theme-for-Emacs")
 (el-get-bundle smooth-scrolling-mode :type git :url "https://github.com/aspiers/smooth-scrolling")
+
+(el-get-bundle helm-ag)
+(el-get-bundle company-mode)
 
 (provide 'el-get-config)

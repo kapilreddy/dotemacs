@@ -40,7 +40,7 @@
           (lambda ()
             (enable-paredit-mode)
             (rainbow-delimiters-mode)
-            (add-to-list 'ac-sources 'ac-source-yasnippet)
+            ;; (add-to-list 'ac-sources 'ac-source-yasnippet)
             (setq buffer-save-without-query t)))
 
 ;;Treat hyphens as a word character when transposing words
@@ -64,54 +64,8 @@
 (remove-hook 'clojure-mode-hook 'clojure-test-maybe-enable)
 
 
-
-;; Midje utility functions
-(defun clojure-in-tests-p ()
-  (or (string-match-p "test\." (clojure-find-ns))
-      (string-match-p "/test" (buffer-file-name))))
-
-
-(defun midje-test-for (namespace)
-  (let* ((namespace (clojure-underscores-for-hyphens namespace))
-         (segments (split-string namespace "\\."))
-         (test-segments (append (list "test") segments)))
-    (mapconcat 'identity test-segments "/")))
-
-
-(defun midje-jump-to-test ()
-  "Jump from implementation file to test."
-  (interactive)
-  (find-file (format "%s/%s_test.clj"
-                     (file-name-as-directory
-                      (locate-dominating-file buffer-file-name "src/"))
-                     (midje-test-for (clojure-find-ns)))))
-
-
-(defun midje-implementation-for (namespace)
-  (let* ((namespace (clojure-underscores-for-hyphens namespace))
-         (segments (split-string (replace-regexp-in-string "_test" "" namespace) "\\.")))
-    (mapconcat 'identity segments "/")))
-
-
-(defun midje-jump-to-implementation ()
-  "Jump from midje test file to implementation."
-  (interactive)
-  (find-file (format "%s/src/%s.clj"
-                     (locate-dominating-file buffer-file-name "src/")
-                     (midje-implementation-for (clojure-find-package)))))
-
-
-(defun midje-jump-between-tests-and-code ()
-  (interactive)
-  (if (clojure-in-tests-p)
-      (midje-jump-to-implementation)
-    (midje-jump-to-test)))
-
-
-(define-key clojure-mode-map (kbd "C-c t") 'midje-jump-between-tests-and-code)
-
-
 (require 'cider)
+(setq cider-font-lock-dynamically '(macro core function var))
 (setq nrepl-log-messages t)
 (setq cider-auto-mode t)
 (setq cider-prompt-for-symbol nil)
@@ -132,6 +86,52 @@
 
 (require 'cljr-helm)
 (setq clj-add-ns-to-blank-clj-files nil)
-(define-key clojure-mode-map (kbd "C-c M-m") 'cljr-helm)
+(define-key clojure-mode-map (kbd "C-c C-r") 'cljr-helm)
 
+(defun jump-to-prev-comment ()
+  (interactive)
+  (search-backward-regexp "^;; \\([-+[:digit:]]+\\)")
+  (let ((text-scale-mode-amount (string-to-number (match-string 1))))
+    (text-scale-mode +1)
+    (recenter-top-bottom 'recenter-tb-top)))
+
+(defun jump-to-next-comment ()
+  (interactive)
+  (search-forward-regexp "^;; \\([-+[:digit:]]+\\)")
+  (let ((text-scale-mode-amount (string-to-number (match-string 1))))
+    (text-scale-mode +1)
+    (recenter-top-bottom 'recenter-tb-top)))
+
+(define-key clojure-mode-map (kbd "M-1") 'jump-to-prev-comment)
+(define-key clojure-mode-map (kbd "M-2") 'jump-to-next-comment)
+
+(require 'smooth-scrolling)
+;; scroll one line at a time (less "jumpy" than defaults)
+(smooth-scrolling-mode 1)
+
+(custom-set-variables
+ '(scroll-conservatively 1000)
+ '(scroll-margin 3)
+ )
+
+(define-key clojure-mode-map (kbd "C-c M-h") 'hlt-highlight-region)
+(define-key clojure-mode-map (kbd "C-c M-x") 'hlt-unhighlight-region)
+
+(require 'sesman)
+(setq sesman-use-friendly-sessions t)
+
+
+(global-company-mode)
+
+(add-hook 'cider-repl-mode-hook #'company-mode)
+(add-hook 'cider-mode-hook #'company-mode)
+(add-hook 'cider-mode-hook #'eldoc-mode)
+(add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
+(add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
+
+(setq company-idle-delay nil) ; never start completions automatically
+
+(global-set-key (kbd "M-TAB") #'company-complete)
+(setq cider-jdk-src-paths '("/Users/kapil/Work/moby/java-sources/"))
+(setq cider-special-mode-truncate-lines nil)
 (provide 'clojure-config)
