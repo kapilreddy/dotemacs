@@ -1,7 +1,7 @@
 ;; Configuration for ido-mode
 
-;; Setting ido 
-(setq 
+;; Setting ido
+(setq
   ido-save-directory-list-file "~/.emacs.d/cache/ido.last"
   ido-case-fold  t
   ido-enable-last-directory-history t
@@ -53,5 +53,15 @@
      (ido-completing-read
       "M-x "
       (all-completions "" obarray 'commandp))))))
+
+
+(require 'helm-ag)
+
+(setq helm-ag-insert-at-point 'symbol
+      helm-ag-fuzzy-match t)
+(global-set-key (kbd "C-x c g a") 'helm-do-ag-project-root)
+(global-set-key (kbd "C-x c g s") 'helm-do-ag)
+;; Move old behaviour to a new key
+(global-set-key (kbd "C-x c g g") 'helm-do-grep-ag)
 
 (provide 'ido-config)
