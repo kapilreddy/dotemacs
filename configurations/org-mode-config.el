@@ -8,10 +8,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq org-directory "~/Google Drive/org-files/")
-(setq org-base-directory "~/Google Drive/org-files/")
-(setq org-work-directory "~/Google Drive/org-files/work/")
-(setq org-personal-directory "~/Google Drive/org-files/personal/")
+(setq org-directory "~/Dropbox/org-files/")
+(setq org-base-directory "~/Dropbox/org-files/")
+(setq org-work-directory "~/Dropbox/org-files/work/")
+(setq org-personal-directory "~/Dropbox/org-files/personal/")
 (setq org-agenda-files (list (concat org-base-directory "work")
                              (concat org-base-directory "personal")))
 
@@ -115,17 +115,17 @@
 ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, and org-protocol
 (setq org-capture-templates
       (quote (("t" "todo" entry (file 'capture-file-path)
-               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+               "* TODO %?\n%U\n" :clock-in t :clock-resume t)
               ("m" "Meeting" entry (file+headline (concat org-work-directory "meetings.org") "Meetings")
                "* %? %U\n" :clock-in t :clock-resume t)
-              ("n" "note" entry (file 'capture-file-path)
+              ("n" "note" entry (file+datetree (concat org-base-directory "notes.org"))
                "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
               ("j" "Journal" entry (file+datetree (concat org-base-directory "diary.org"))
                "* %?\n%U\n" :clock-in t :clock-resume t)
               ("h" "Habit" entry (file 'capture-file-path)
                "* NEXT %?\n%U\n%a\nSCHEDULED: %t .+1d/3d\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
 
-(setq capture-file-path (concat org-base-directory "capture.org"))
+(setq capture-file-path (concat org-work-directory "capture.org"))
 
 (setq org-default-notes-file capture-file-path)
 
@@ -192,18 +192,24 @@
 
 (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
 
-(setq org-columns-default-format "%PRIORITY %80ITEM(Task) %DEADLINE  %10CLOCKSUM {:} %10Effort(Effort) %30CREATED(CREATED) 100%TAGS")
+(setq org-columns-default-format "%PRIORITY %80ITEM(Task) %DEADLINE  %10CLOCKSUM {:} %10Effort{:} %30CREATED(CREATED) 100%TAGS")
+
+(setq org-columns-default-format "%%80ITEM(Task) %10Effort{:}")
 
 (setq org-agenda-overriding-columns-format nil)
+
+
+
+
 
 ;; Custom agenda command definitions
 (setq org-agenda-custom-commands
       (quote (("a" "Work Agenda"
                agenda
-               (progn (setq org-super-agenda-mode t)
-                      (setq org-agenda-log-mode t)
-                      (setq org-agenda-clockreport-mode t))
-
+               (progn (org-super-agenda-mode)
+                      ;; (org-agenda-log-mode)
+                      ;; (org-agenda-clockreport-mode)
+                      )
                ((org-agenda-files (list org-work-directory))
                 (org-agenda-ndays 1)
                 (org-agenda-sorting-strategy '(deadline-up priority-down))
@@ -211,21 +217,25 @@
                                                   :log t)
                                            (:name "Oncall"
                                                   :tag "oncall")
+                                           (:name "Daily"
+                                                  :tag "daily")
                                            (:name "Followup"
-                                                  :and (:todo ("TODO" "WAITING")
+                                                  :and (:todo ("TODO" "WAITING" "FOLLOWUP")
                                                               :tag ("FOLLOWUP")))
                                            (:name "Delegated"
                                                   :todo ("DELEGATED"))
                                            (:name "Review"
                                                   :and (:todo ("TODO" "WAITING")
-                                                              :tag ("review")))
+                                                              :tag ("review")
+                                                              :not (:tag "daily")))
                                            (:name "Waiting TODOs"
                                                   :and (:todo "WAITING"
                                                               :not (:tag ("oncall"
                                                                           "review"))))
                                            (:name "TODO"
                                                   :log t
-                                                  :todo ("TODO"))
+                                                  :and (:todo ("TODO")
+                                                              :not (:tag "daily")))
                                            (:name "Projects"
                                                   :todo ("PROJECT"))
                                            (:name "Done today"
@@ -235,12 +245,32 @@
                                            (:name "Next items"
                                                   :todo ("NEXT"))))))
 
+              ("b" "Work Agenda"
+               agenda
+               (progn (org-super-agenda-mode)
+                      ;; (org-agenda-log-mode)
+                      ;; (org-agenda-clockreport-mode)
+                      )
+               (;; (org-agenda-files (list (concat org-work-directory
+                ;;                                 "arch.org")))
+                (org-agenda-ndays 1)
+                (org-deadline-warning-days 60)
+                (org-agenda-prefix-format " %b %e ")
+                (org-agenda-sorting-strategy '(deadline-up priority-down))
+                (org-super-agenda-groups '((:name "Jagadish"
+                                                  :tag "@jagadish")
+                                           (:name "Vineet"
+                                                  :tag "@vineet")
+                                           (:name "Kapil"
+                                                  :tag "@kapil")))))
+
               ("r" "Week work Agenda"
-               ((agenda ""
-                        ((org-agenda-files (list org-work-directory))
-                         (org-agenda-ndays 7)
-                         (org-agenda-sorting-strategy '(deadline-up priority-down))
-                         (org-super-agenda-groups '())))))
+               agenda
+               (org-super-agenda-mode)
+               ((org-agenda-files (list org-work-directory))
+                (org-agenda-ndays 7)
+                (org-agenda-sorting-strategy '(deadline-up priority-down))
+                (org-super-agenda-groups '())))
 
 
               ("b" "Work Agenda"
@@ -301,49 +331,42 @@
                       ((org-agenda-overriding-header
                         "Notes and Tasks to Refile")))
                 nil))
-              ("p" "Personal Agenda"
-               ((todo "FOLLOWUP"
-                      ((org-agenda-files (list org-personal-directory))
-                       (org-agenda-overriding-header
-                        "Followups")
-                       (org-agenda-sorting-strategy '(deadline-up))))
-                (tags-todo "review"
-                           ((org-agenda-files (list org-personal-directory))
-                            (org-agenda-overriding-header
-                             "Review Tasks")
-                            (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("TODO")))))
-                (tags-todo "WAITING"
-                           ((org-agenda-files (list org-personal-directory))
-                            (org-agenda-overriding-header
-                             "Waiting Tasks")
-                            (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("HOLD" "PROJECT" "NEXT")))))
-                (agenda "" ((org-agenda-files (list org-personal-directory))
-                            (org-agenda-ndays 7)
-                            (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("TODO" "PROJECT")
-                                                                                 'regexp '(":review:")))
-                            (org-agenda-sorting-strategy '(deadline-up))))
-                (tags-todo "project"
-                           ((org-agenda-files (list org-personal-directory))
-                            (org-agenda-overriding-header
-                             "Projects")
-                            (org-agenda-entry-types '(:deadline))
-                            (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("PROJECT" "HOLD")))))
-                (todo "REVIEW"
-                      ((org-agenda-files (list org-personal-directory))
-                       (org-agenda-overriding-header
-                        "Review Tasks")
-                       (org-agenda-sorting-strategy '(deadline-up))))
+              ("p" "Work Agenda"
+               agenda
+               (progn (setq org-super-agenda-mode t)
+                      (setq org-agenda-log-mode t)
+                      (setq org-agenda-clockreport-mode t))
 
-                (todo "NEXT"
-                      ((org-agenda-files (list org-personal-directory))
-                       (org-agenda-overriding-header
-                        "Next Tasks")
-                       (org-agenda-sorting-strategy '(deadline-up))))
-
-                (tags "REFILE"
-                      ((org-agenda-overriding-header
-                        "Notes and Tasks to Refile")))
-                nil))
+               ((org-agenda-files (list org-personal-directory))
+                (org-agenda-ndays 1)
+                (org-agenda-sorting-strategy '(deadline-up priority-down))
+                (org-super-agenda-groups '((:name "Worked on today"
+                                                  :log t)
+                                           (:name "Oncall"
+                                                  :tag "oncall")
+                                           (:name "Followup"
+                                                  :and (:todo ("TODO" "WAITING")
+                                                              :tag ("FOLLOWUP")))
+                                           (:name "Delegated"
+                                                  :todo ("DELEGATED"))
+                                           (:name "Review"
+                                                  :and (:todo ("TODO" "WAITING")
+                                                              :tag ("review")))
+                                           (:name "Waiting TODOs"
+                                                  :and (:todo "WAITING"
+                                                              :not (:tag ("oncall"
+                                                                          "review"))))
+                                           (:name "TODO"
+                                                  :log t
+                                                  :todo ("TODO"))
+                                           (:name "Projects"
+                                                  :todo ("PROJECT"))
+                                           (:name "Done today"
+                                                  :todo ("DONE"))
+                                           (:name "On hold"
+                                                  :todo ("HOLD"))
+                                           (:name "Next items"
+                                                  :todo ("NEXT"))))))
               ("l" "Work done so far..."
                ((agenda "" ((org-agenda-span 'week)
                             (org-agenda-start-on-weekday 0)
@@ -504,7 +527,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (let (org-log-done org-log-states)   ; turn off logging
     (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
-(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+;; (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 ;; Parent task cannot be switched to done unless all subtasks are done
 (setq org-enforce-todo-dependencies t)
 
@@ -590,5 +613,6 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (define-key org-mode-map "\M-q" 'org-fill-paragraph)
 
 
+(setq org-modules (append org-modules '(org-habit)))
 
 (provide 'org-mode-config)
