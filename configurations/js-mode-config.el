@@ -1,9 +1,13 @@
 (require 'espresso)
 (add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx$" . espresso-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
 (setq espresso-indent-level 2)
 
 (setq-default indent-tabs-mode nil)
+(setq js-indent-level 2)
+(setq typescript-indent-level 2)
+
 
 
 (eval-after-load 'espresso-mode
@@ -32,6 +36,6 @@
 ;; ;; Start the server when we first open a js file and start checking
 ;; (add-hook 'javascript-mode-hook
 ;;           (lambda ()
-;;             (lintnode-hook))) 
+;;             (lintnode-hook)))
 
 (provide 'js-mode-config)
