@@ -19,7 +19,10 @@
 
 ;; Copied from CDK emacs config
 (ido-mode t)
-(ido-everywhere t)
+;; On Emacs 30, helm advises `ido-everywhere' to signal an error when
+;; helm-mode is active. Guard it so init never aborts here.
+(unless (bound-and-true-p helm-mode)
+  (ignore-errors (ido-everywhere t)))
 
 
 ;; Copied from Vedang's emacs config

@@ -76,7 +76,7 @@
 (setq cider-eval-result-prefix "")
 
 (add-hook 'cider-repl-mode-hook 'paredit-mode)
-;; Clojur refactor config
+;; Clojure refactor config
 (require 'clj-refactor)
 (add-hook 'clojure-mode-hook (lambda ()
                                (clj-refactor-mode 1)
@@ -105,14 +105,7 @@
 (define-key clojure-mode-map (kbd "M-1") 'jump-to-prev-comment)
 (define-key clojure-mode-map (kbd "M-2") 'jump-to-next-comment)
 
-(require 'smooth-scrolling)
-;; scroll one line at a time (less "jumpy" than defaults)
-(smooth-scrolling-mode 1)
-
-(custom-set-variables
- '(scroll-conservatively 1000)
- '(scroll-margin 3)
- )
+;; Scrolling is handled globally in ui.el (pixel-scroll-precision-mode).
 
 (define-key clojure-mode-map (kbd "C-c M-h") 'hlt-highlight-region)
 (define-key clojure-mode-map (kbd "C-c M-x") 'hlt-unhighlight-region)

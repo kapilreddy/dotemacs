@@ -24,8 +24,9 @@
 (global-hi-lock-mode 1)
 
 (require 'el-get-config)
-(require 'epl)
-(require 'pkg-info)
+;; epl/pkg-info are legacy deps; load if present but don't fail startup.
+(require 'epl nil t)
+(require 'pkg-info nil t)
 (require 'uniquify)
 (require 'misc)
 (require 'ui)
@@ -37,6 +38,8 @@
 (require 'yas)
 (require 'org-mode-config)
 (require 'emacslisp-config)
+(require 'python-mode-config)
+(require 'markdown-config)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
